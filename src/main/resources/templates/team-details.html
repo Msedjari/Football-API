@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{layout :: layout('Team Details', ~{::div})}">
+<body>
+    <div>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Team Details</h1>
+            <a th:href="@{/teams(leagueId=${param.leagueId})}" class="btn btn-secondary">Back to Teams</a>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="row g-0">
+                <div class="col-md-4 d-flex align-items-center justify-content-center p-3">
+                    <img th:src="${team.logo}" class="img-fluid rounded" th:alt="${team.name}" style="max-height: 200px;">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h2 class="card-title" th:text="${team.name}">Team Name</h2>
+                        <div class="badge bg-primary mb-2" th:if="${team.code}" th:text="${team.code}">CODE</div>
+                        <ul class="list-group list-group-flush mt-3">
+                            <li class="list-group-item">
+                                <strong>Country:</strong> <span th:text="${team.country}">Country</span>
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Founded:</strong> <span th:text="${team.founded > 0 ? team.founded : 'Unknown'}">Year</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Stadium Information -->
+        <div class="card mb-4" th:if="${team.stadium}">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">Stadium Information</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12">
+                        <h4 th:text="${team.stadium}">Stadium Name</h4>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item" th:if="${team.stadiumCapacity > 0}">
+                                <strong>Capacity:</strong> <span th:text="${#numbers.formatInteger(team.stadiumCapacity, 0, 'COMMA')}">Capacity</span>
+                            </li>
+                            <li class="list-group-item" th:if="${team.stadiumCity}">
+                                <strong>City:</strong> <span th:text="${team.stadiumCity}">City</span>
+                            </li>
+                            <li class="list-group-item" th:if="${team.stadiumAddress}">
+                                <strong>Address:</strong> <span th:text="${team.stadiumAddress}">Address</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Team Statistics -->
+        <div class="card mb-4" th:if="${team.matchesPlayed > 0}">
+            <div class="card-header bg-success text-white">
+                <h3 class="mb-0">Team Statistics</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Season Performance</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>Matches Played</span>
+                                <span class="badge bg-primary rounded-pill" th:text="${team.matchesPlayed}">0</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>Wins</span>
+                                <span class="badge bg-success rounded-pill" th:text="${team.wins}">0</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>Draws</span>
+                                <span class="badge bg-warning rounded-pill" th:text="${team.draws}">0</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>Losses</span>
+                                <span class="badge bg-danger rounded-pill" th:text="${team.losses}">0</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>Points</span>
+                                <span class="badge bg-dark rounded-pill" th:text="${team.points}">0</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Goal Statistics</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>Goals Scored</span>
+                                <span class="badge bg-success rounded-pill" th:text="${team.goalsScored}">0</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>Goals Conceded</span>
+                                <span class="badge bg-danger rounded-pill" th:text="${team.goalsConceded}">0</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>Goal Difference</span>
+                                <span th:class="${team.goalDifference >= 0 ? 'badge bg-success rounded-pill' : 'badge bg-danger rounded-pill'}" 
+                                      th:text="${team.goalDifference >= 0 ? '+' + team.goalDifference : team.goalDifference}">0</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Performance Chart -->
+                <div class="mt-4">
+                    <h5>Performance Distribution</h5>
+                    <div class="progress" style="height: 30px;">
+                        <div class="progress-bar bg-success" role="progressbar" 
+                             th:style="'width: ' + ${team.wins * 100 / team.matchesPlayed} + '%'" 
+                             th:text="${team.wins}">Wins</div>
+                        <div class="progress-bar bg-warning" role="progressbar" 
+                             th:style="'width: ' + ${team.draws * 100 / team.matchesPlayed} + '%'" 
+                             th:text="${team.draws}">Draws</div>
+                        <div class="progress-bar bg-danger" role="progressbar" 
+                             th:style="'width: ' + ${team.losses * 100 / team.matchesPlayed} + '%'" 
+                             th:text="${team.losses}">Losses</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
